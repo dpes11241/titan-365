@@ -136,6 +136,10 @@
 
         // Function to inject AddressFinder script into the document
         function injectAddressFinderScript() {
+          console.log('suburb added');
+        if(suburbLocation == ""){
+            document.getElementById("suburb-message").style.display = "block";
+        }
         if (!document.getElementById('addressfinder-widget-script')) {
         var scriptTag = document.createElement('script');
         scriptTag.id = 'addressfinder-widget-script';
