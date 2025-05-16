@@ -9,7 +9,7 @@
 </head>
 
 <body><script>
-  console.log("UPDATED2");
+  console.log("UPDATED3");
     function submitMarketingForm(event){
   debugger;
   if(document.getElementById('firstname-1669975306869').value.trim() == ""){
@@ -453,12 +453,13 @@ var errorMessage = document.querySelector("span.af-pv-message.is-custom");
             setRawInternationalField(metadata);
              console.log("result:not_verified 439");
              console.log("result not verfied oapcity 1");
-            //    setTimeout(() => {  
-            //     const customMessageSpan = document.querySelector("span.af-pv-message.is-custom");
-            //     if (customMessageSpan) {
-            //       customMessageSpan.textContent = "Incorrect format. If entering a landline, include the area code.";
-            //     }
-            // }, 1000);
+             setTimeout(() => {  
+                  document.querySelector("span.af-pv-message.is-custom").style.opacity = '1';
+            }, 500);
+             setTimeout(() => {  
+                  document.querySelector("span.af-pv-message.is-custom").style.opacity = '1';
+                  console.log("result verfied oapcity 0");
+            }, 1000);
              
           });
 
