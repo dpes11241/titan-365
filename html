@@ -9,6 +9,7 @@
 </head>
 
 <body><script>
+  console.log("UPDATED2");
     function submitMarketingForm(event){
   debugger;
   if(document.getElementById('firstname-1669975306869').value.trim() == ""){
@@ -31,6 +32,10 @@
 
   if(document.getElementById('mobilephone-1722356712050').value.trim() == ""){
     document.getElementById("phonenumber-message").style.display = "block";
+    if (document.querySelector("span.af-pv-message.is-custom")) {
+  document.querySelector("span.af-pv-message.is-custom").style.opacity = '0';
+}
+
     document.getElementById('mobilephone-1722356712050').classList.add("icon-error");
   }
   else if(document.getElementById('mobilephone-1722356712050').value.trim() !== ""){
@@ -136,10 +141,16 @@
 
         // Function to inject AddressFinder script into the document
         function injectAddressFinderScript() {
-          console.log('suburb added');
-        if(suburbLocation == ""){
-            document.getElementById("suburb-message").style.display = "block";
+          console.log('suburb added final');
+        const inputValue = document.querySelector("#ab_propertyname-1728354172346").value.trim();
+
+        if (inputValue.length > 0) {
+          document.getElementById("suburb-message").style.display = "block";
+        } else {
+          document.getElementById("suburb-message").style.display = "none";
         }
+
+
         if (!document.getElementById('addressfinder-widget-script')) {
         var scriptTag = document.createElement('script');
         scriptTag.id = 'addressfinder-widget-script';
@@ -242,42 +253,80 @@ function iOS() {
 
        
         // CLONE NODE 
-const observer = new MutationObserver(mutations => {
+        const observer = new MutationObserver(mutations => {
   mutations.forEach(mutation => {
     mutation.addedNodes.forEach(node => {
       if (node.nodeType !== 1) return; // Skip non-element nodes
 
-      const newMessages = [];
+      let newMessage = null;
 
-      // Skip processing if it's already a custom message
+      // If node is a new message and not custom
       if (node.matches('.af-pv-message') && !node.classList.contains('is-custom')) {
-        newMessages.push(node);
+        newMessage = node;
       }
 
-      // Also check for children, but exclude already-custom ones
-      const innerMessages = node.querySelectorAll('.af-pv-message:not(.is-custom)');
-      innerMessages.forEach(msg => newMessages.push(msg));
+      // If not directly matched, check children
+      if (!newMessage) {
+        const inner = node.querySelector('.af-pv-message:not(.is-custom)');
+        if (inner) newMessage = inner;
+      }
 
-      newMessages.forEach(original => {
+      if (newMessage) {
         // Remove existing custom message
         const existingCustom = document.querySelector('.af-pv-message.is-custom');
         if (existingCustom) existingCustom.remove();
 
-        // Clone and add .is-custom
-        const clone = original.cloneNode(true);
+        // Create a new custom message element
+        const clone = newMessage.cloneNode(true);
         clone.classList.add('is-custom');
+        clone.textContent = "Number cannot be verified (landlines must include area code)";
 
         // Append clone just before </body>
         document.body.appendChild(clone);
 
-        // console.log('Updated .af-pv-message.is-custom:', clone);
-
-        // Run opacity check after inserting
-        updateCustomOpacity();
-      });
+        // Run opacity update
+        // updateCustomOpacity();
+      }
     });
   });
 });
+
+// const observer = new MutationObserver(mutations => {
+//   mutations.forEach(mutation => {
+//     mutation.addedNodes.forEach(node => {
+//       if (node.nodeType !== 1) return; // Skip non-element nodes
+
+//       const newMessages = [];
+
+//       // Skip processing if it's already a custom message
+//       if (node.matches('.af-pv-message') && !node.classList.contains('is-custom')) {
+//         newMessages.push(node);
+//       }
+
+//       // Also check for children, but exclude already-custom ones
+//       const innerMessages = node.querySelectorAll('.af-pv-message:not(.is-custom)');
+//       innerMessages.forEach(msg => newMessages.push(msg));
+
+//       newMessages.forEach(original => {
+//         // Remove existing custom message
+//         const existingCustom = document.querySelector('.af-pv-message.is-custom');
+//         if (existingCustom) existingCustom.remove();
+
+//         // Clone and add .is-custom
+//         const clone = original.cloneNode(true);
+//         clone.classList.add('is-custom');
+
+//         // Append clone just before </body>
+//         document.body.appendChild(clone);
+
+//         // console.log('Updated .af-pv-message.is-custom:', clone);
+
+//         // Run opacity check after inserting
+//         updateCustomOpacity();
+//       });
+//     });
+//   });
+// });
 
 observer.observe(document.body, {
   childList: true,
@@ -285,27 +334,28 @@ observer.observe(document.body, {
 });
 
 // Function to update opacity based on presence of .af-pv-icon-success
-const updateCustomOpacity = () => {
-  const customMsg = document.querySelector('.af-pv-message.is-custom');
-  const successIcon = document.querySelector('.af-pv-icon-success');
+// const updateCustomOpacity = () => {
+//   const customMsg = document.querySelector('.af-pv-message.is-custom');
+//   const successIcon = document.querySelector('.af-pv-icon-success');
 
-  if (customMsg) {
-    customMsg.style.opacity = successIcon ? '0' : '1';
-  }
-};
+//   if (customMsg) {
+//     customMsg.style.opacity = successIcon ? '0' : '1';
+//     console.log("updateCustomOpacity function 0 if success");
+//   }
+// };
 
 // Observer to watch for appearance/removal of .af-pv-icon-success
-const successObserver = new MutationObserver(() => {
-  updateCustomOpacity();
-});
+// const successObserver = new MutationObserver(() => {
+//   updateCustomOpacity();
+// });
 
-successObserver.observe(document.body, {
-  childList: true,
-  subtree: true
-});
+// successObserver.observe(document.body, {
+//   childList: true,
+//   subtree: true
+// });
 
 // Run once initially in case success icon already exists
-updateCustomOpacity();
+// updateCustomOpacity();
 
 //REsize
 window.addEventListener('resize', () => {
@@ -390,17 +440,25 @@ var errorMessage = document.querySelector("span.af-pv-message.is-custom");
         afWidget.on("result:verified", function (metadata) {
             setRawInternationalField(metadata);
              console.log("result:verified 434");
+                setTimeout(() => {  
+                  document.querySelector("span.af-pv-message.is-custom").style.opacity = '0';
+            }, 500);
+             setTimeout(() => {  
+                  document.querySelector("span.af-pv-message.is-custom").style.opacity = '0';
+                  console.log("result verfied oapcity 0");
+            }, 1000);
           });
 
           afWidget.on("result:not_verified", function (metadata) {
             setRawInternationalField(metadata);
              console.log("result:not_verified 439");
-               setTimeout(() => {  
-                const customMessageSpan = document.querySelector("span.af-pv-message.is-custom");
-                if (customMessageSpan) {
-                  customMessageSpan.textContent = "Incorrect format. If entering a landline, include the area code.";
-                }
-            }, 1000);
+             console.log("result not verfied oapcity 1");
+            //    setTimeout(() => {  
+            //     const customMessageSpan = document.querySelector("span.af-pv-message.is-custom");
+            //     if (customMessageSpan) {
+            //       customMessageSpan.textContent = "Incorrect format. If entering a landline, include the area code.";
+            //     }
+            // }, 1000);
              
           });
 
@@ -612,6 +670,40 @@ observer.observe(document.body, config);
 
 
         // EMAIL VALIDATION END
+
+// EMAIL PHONE EMPTY MESSAGE REMOVE 
+
+document.addEventListener('input', handleFieldInput);
+document.addEventListener('change', handleFieldInput);
+
+function handleFieldInput(e) {
+  if (e.target.id === 'mobilephone-1722356712050' || e.target.id === 'emailaddress1-1669977007902') {
+    setTimeout(() => {
+      let targetMessage;
+
+      // Set the target message based on the field
+      if (e.target.id === 'mobilephone-1722356712050') {
+        targetMessage = document.querySelector('span.af-pv-message.is-custom');
+      } else if (e.target.id === 'emailaddress1-1669977007902') {
+        targetMessage = document.getElementById('email-af');
+      }
+
+      if (targetMessage) {
+        if (e.target.value.trim() === '') {
+          targetMessage.style.opacity = '0';
+          targetMessage.style.visibility = 'hidden';
+        } else {
+          targetMessage.style.opacity = '1';
+          targetMessage.style.visibility = 'visible';
+        }
+      }
+    }, 1000); // 1-second delay
+  }
+}
+
+// EMAIL PHONE EMPTY MESSAGE REMOVE 
+
+      
   </script><style>
     @font-face {
       font-family: neue-haas-grotesk-display-pro-55-roman;
@@ -1779,7 +1871,7 @@ span#email-af {
                                 <th class="columnContainer inner" style="min-width: 5px; padding: 0px; vertical-align: top; word-wrap: break-word; word-break: break-word; word-wrap: break-word; word-break: break-word; background-color: rgba(0, 0, 0, 0); border-color: rgb(0, 0, 0); border-width: 0px; border-style: none; border-radius: 0px; font-weight: normal;">
                                   <div class="textFormFieldBlock" data-editorblocktype="TextFormField" data-targetproperty="ab_propertyname" data-prefill="false" data-required="required" style="display: block;">
                                     <input class="addressfinder-input" id="ab_propertyname-1728354172346" name="ab_propertyname" placeholder="Suburb" title="Property Name" maxlength="100" required="required" value="">
-                                    <span id="suburb-message" style="display: none;">The suburb is not valid</span>
+                                    <span id="suburb-message" style="display: none;">Suburb cannot be verified (select from dropdown)</span>
                                   </div>
                                   <!-- <div class="lookupFormFieldBlock lookupFormFieldBlockProduct" data-editorblocktype="LookupFormField" data-targetproperty="ab_product" data-lookuptargets="[{&quot;LogicalName&quot;:&quot;ab_productlinesformarketingform&quot;,&quot;PrimarySavedQueryId&quot;:&quot;62a31366-7995-41aa-ab6e-284c48f6e733&quot;,&quot;PrimaryNameAttribute&quot;:&quot;ab_name&quot;}]" data-prefill="false" data-publicvisibility="true" style="display: block;">
                                     <input id="771da4f9-4a93-497d-8ab9-9798da5ff50a" type="text" name="ab_product" placeholder="Product" title="Product" list="list-771da4f9-4a93-497d-8ab9-9798da5ff50a" value="">
