@@ -9,7 +9,7 @@
 </head>
 
 <body><script>
-  console.log("UPDATED3");
+  console.log("UPDATED cus8");
     function submitMarketingForm(event){
   debugger;
   if(document.getElementById('firstname-1669975306869').value.trim() == ""){
@@ -443,10 +443,15 @@ var errorMessage = document.querySelector("span.af-pv-message.is-custom");
                 setTimeout(() => {  
                   document.querySelector("span.af-pv-message.is-custom").style.opacity = '0';
             }, 500);
-             setTimeout(() => {  
-                  document.querySelector("span.af-pv-message.is-custom").style.opacity = '0';
-                  console.log("result verfied oapcity 0");
-            }, 1000);
+              setTimeout(() => {  
+                 if (document.querySelector('.af-pv-icon-success')) {
+                   document.querySelector("span.af-pv-message.is-custom").style.opacity = '0';
+                    console.log("result:verified 434 after 1200ms");
+                }
+            }, 1200);
+          
+
+
           });
 
           afWidget.on("result:not_verified", function (metadata) {
@@ -456,10 +461,7 @@ var errorMessage = document.querySelector("span.af-pv-message.is-custom");
              setTimeout(() => {  
                   document.querySelector("span.af-pv-message.is-custom").style.opacity = '1';
             }, 500);
-             setTimeout(() => {  
-                  document.querySelector("span.af-pv-message.is-custom").style.opacity = '1';
-                  console.log("result verfied oapcity 0");
-            }, 1000);
+            
              
           });
 
